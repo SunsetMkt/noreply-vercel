@@ -18,6 +18,8 @@ user = os.environ.get('YANDEX_MAIL_USER')
 pwd = os.environ.get('YANDEX_MAIL_PWD')
 # 发件人的邮箱
 sender_mail = os.environ.get('YANDEX_MAIL_USER')
+# api token
+api_token = os.environ.get('API_TOKEN')
 
 
 def send_mail(receiver, mail_title, mail_content):
@@ -45,10 +47,13 @@ def home():
 
 @app.route('/send', methods=['GET', 'POST'])
 def send():
-    # /send?to=your_email&subject=your_subject&body=your_body
+    # /send?to=your_email&subject=your_subject&body=your_body&token=your_token
     to = flask.request.args.get('to')
     subject = flask.request.args.get('subject')
     body = flask.request.args.get('body')
+    token = flask.request.args.get('token')
+    if token != api_token:
+        return 'token error'
     # Check missing
     if not to or not subject or not body:
         return 'missing'
