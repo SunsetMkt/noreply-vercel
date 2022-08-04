@@ -15,6 +15,18 @@
             curl -X http://your_url/send?to=your_email&subject=your_subject&body=your_body&token=your_token
         </code>
     </p>
+    <h2>Try</h2>
+    <form action="send">
+        <p>To:</p>
+        <input type="text" name="to" placeholder="To" value="i@lwd-temp.top">
+        <p>Subject:</p>
+        <input type="text" name="subject" placeholder="Subject" value="Test Subject">
+        <p>Body:</p>
+        <textarea name="body" placeholder="Body">Test Body</textarea>
+        <p>Token:</p>
+        <input type="password" name="token" placeholder="Token" value="Test Token">
+        <input type="submit" value="Send">
+    </form>
     <script>
         var curl = document.getElementById('curl');
         curl.innerHTML = curl.innerHTML.replace(/your_url/g, window.location.host);
