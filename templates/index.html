@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>no-reply</title>
+</head>
+
+<body>
+    <h1>no-reply Sender</h1>
+    <h2>Usage</h2>
+    <p>
+        <code id="curl">
+            curl -X http://your_url/send?to=your_email&subject=your_subject&body=your_body
+        </code>
+    </p>
+    <script>
+        var curl = document.getElementById('curl');
+        curl.innerHTML = curl.innerHTML.replace(/your_url/g, window.location.host);
+    </script>
+</body>
+
+</html>
