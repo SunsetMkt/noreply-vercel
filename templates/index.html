@@ -12,11 +12,11 @@
     <h2>Usage</h2>
     <p>
         <code id="curl">
-            curl -X http://your_url/send?to=your_email&subject=your_subject&body=your_body&token=your_token
+            curl -X POST -H "Content-Type: application/json" -d '{"to":"your_email","subject":"your_subject","body":"your_body","token":"your_token","html":"0"}' http://your_url/send
         </code>
     </p>
     <h2>Try</h2>
-    <form action="send">
+    <form>
         <p>To:</p>
         <input type="text" name="to" placeholder="To" value="i@lwd-temp.top">
         <p>Subject:</p>
@@ -25,11 +25,63 @@
         <textarea name="body" placeholder="Body">Test Body</textarea>
         <p>Token:</p>
         <input type="password" name="token" placeholder="Token" value="Test Token">
-        <input type="submit" value="Send">
+        <p>Is HTML?</p>
+        <input type="checkbox" name="html" value="1">
+        <br>
+        <button type="button" onclick="send()">Send</button>
+        <!--Show return-->
+        <p id="return"></p>
     </form>
     <script>
         var curl = document.getElementById('curl');
         curl.innerHTML = curl.innerHTML.replace(/your_url/g, window.location.host);
+    </script>
+    <script>
+        /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+        }
+    </script>
+    <script>
+        function send() {
+            // hide button
+            document.querySelector('button').style.display = 'none';
+            var to = document.getElementsByName('to')[0].value;
+            var subject = document.getElementsByName('subject')[0].value;
+            var body = document.getElementsByName('body')[0].value;
+            var token = document.getElementsByName('token')[0].value;
+            var html = document.getElementsByName('html')[0].checked;
+            if (html == true) {
+                html = 1;
+            } else {
+                html = 0;
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/send', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                to: to,
+                subject: subject,
+                body: body,
+                token: token,
+                html: html
+            }));
+            // If request is done, no matter success or fail, show button
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    document.querySelector('button').style.display = 'block';
+                    // show the response
+                    document.getElementById('return').innerHTML = xhr.responseText;
+                }
+            }
+        }
     </script>
 </body>
 

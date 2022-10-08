@@ -22,8 +22,12 @@ sender_mail = os.environ.get('YANDEX_MAIL_USER')
 api_token = os.environ.get('API_TOKEN')
 
 
-def send_mail(receiver, mail_title, mail_content):
-    msg = MIMEText(mail_content, "plain", 'utf-8')
+def send_mail(receiver, mail_title, mail_content, ifHTML):
+    # msg = MIMEText(mail_content, "plain", 'utf-8')
+    if ifHTML:
+        msg = MIMEText(mail_content, "html", 'utf-8')
+    else:
+        msg = MIMEText(mail_content, "plain", 'utf-8')
     msg["Subject"] = Header(mail_title, 'utf-8')
     msg["From"] = sender_mail
     msg["To"] = receiver
@@ -34,10 +38,10 @@ def send_mail(receiver, mail_title, mail_content):
         smtp.login(user, pwd)
         smtp.sendmail(sender_mail, receiver, msg.as_string())
         smtp.quit()
-        return True
+        return "success", True
     except Exception as e:
-        print(str(e))
-        return False
+        import traceback
+        return str(traceback.format_exc()), False
 
 
 @app.route('/', methods=['GET'])
@@ -47,17 +51,32 @@ def home():
 
 @app.route('/send', methods=['GET', 'POST'])
 def send():
-    # /send?to=your_email&subject=your_subject&body=your_body&token=your_token
-    to = flask.request.args.get('to')
-    subject = flask.request.args.get('subject')
-    body = flask.request.args.get('body')
-    token = flask.request.args.get('token')
-    if token != api_token:
-        return 'token error'
-    # Check missing
-    if not to or not subject or not body:
-        return 'missing'
-    if send_mail(to, subject, body):
-        return 'success'
+    # POST /send
+    # {'to':'your_email','subject':'your_subject','body':'your_body','token':'your_token','html':'0'}
+    if flask.request.method == 'POST':
+        # Get json from request
+        data = flask.request.get_json()
+        # Try to parse json
+        try:
+            to = data['to']
+            subject = data['subject']
+            body = data['body']
+            token = data['token']
+            html = data['html']
+        except Exception as e:
+            return flask.jsonify({'code': 400, 'msg': 'missing params'}), 400
     else:
-        return 'fail'
+        return flask.jsonify({'code': 400, 'msg': 'only support POST method'}), 400
+    # Check token
+    if token != api_token:
+        return flask.jsonify({'code': 403, 'msg': 'token error'}), 403
+    if str(html) == '1':
+        html = True
+    else:
+        html = False
+    # Send mail
+    msg, status = send_mail(to, subject, body, html)
+    if status:
+        return flask.jsonify({'code': 200, 'msg': 'success'}), 200
+    else:
+        return flask.jsonify({'code': 500, 'msg': msg}), 500
