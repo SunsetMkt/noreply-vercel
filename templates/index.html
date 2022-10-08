@@ -27,7 +27,10 @@
         <input type="password" name="token" placeholder="Token" value="Test Token">
         <p>Is HTML?</p>
         <input type="checkbox" name="html" value="1">
+        <p>Save my token on this page.</p>
+        <input type="checkbox" name="save" value="1">
         <br>
+        <!--Button call send()-->
         <button type="button" onclick="send()">Send</button>
         <!--Show return-->
         <p id="return"></p>
@@ -58,6 +61,13 @@
             var body = document.getElementsByName('body')[0].value;
             var token = document.getElementsByName('token')[0].value;
             var html = document.getElementsByName('html')[0].checked;
+            var save = document.getElementsByName('save')[0].checked;
+            // If save, save token in localStorage
+            if (save) {
+                localStorage.setItem('token', token);
+            } else {
+                localStorage.removeItem('token');
+            }
             if (html == true) {
                 html = 1;
             } else {
@@ -81,6 +91,16 @@
                     document.getElementById('return').innerHTML = xhr.responseText;
                 }
             }
+        }
+    </script>
+    <script>
+        // Read token from localStorage, if exists, fill it in
+        var token = localStorage.getItem('token');
+        if (token) {
+            document.getElementsByName('token')[0].value = token;
+            document.getElementsByName('save')[0].checked = true;
+        } else {
+            document.getElementsByName('save')[0].checked = false;
         }
     </script>
 </body>
