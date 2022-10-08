@@ -119,6 +119,20 @@
             width: 400px;
             font-family: Consolas, Monaco, monospace;
         }
+
+        /** background color for return**/
+
+        .success {
+            background-color: #e6ffe6 !important;
+        }
+
+        .error {
+            background-color: #ffe6e6 !important;
+        }
+
+        .waiting {
+            background-color: #ffffe6 !important;
+        }
     </style>
 </head>
 
@@ -171,6 +185,11 @@
         function send() {
             // disable button
             document.getElementsByTagName("button")[0].disabled = true;
+            // clean return
+            document.getElementById("return").innerHTML = "";
+            // set return waiting
+            document.getElementById("return").className = "waiting";
+            document.getElementById("return").innerHTML = "Waiting...";
             var to = document.getElementsByName('to')[0].value;
             var subject = document.getElementsByName('subject')[0].value;
             var body = document.getElementsByName('body')[0].value;
@@ -202,8 +221,18 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
                     document.getElementsByTagName("button")[0].disabled = false;
-                    // show the response
-                    document.getElementById('return').innerHTML = xhr.responseText;
+                    // if 200
+                    if (xhr.status == 200) {
+                        // set return success
+                        document.getElementById("return").className = "success";
+                        // show return
+                        document.getElementById("return").innerHTML = xhr.responseText;
+                    } else {
+                        // set return error
+                        document.getElementById("return").className = "error";
+                        // show return
+                        document.getElementById("return").innerHTML = xhr.responseText;
+                    }
                 }
             }
         }
@@ -216,6 +245,12 @@
             document.getElementsByName('save')[0].checked = true;
         } else {
             document.getElementsByName('save')[0].checked = false;
+        }
+        // On unchecked, remove token from localStorage
+        document.getElementsByName('save')[0].onchange = function () {
+            if (this.checked == false) {
+                localStorage.removeItem('token');
+            }
         }
     </script>
 </body>
