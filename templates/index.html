@@ -5,6 +5,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>no-reply</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        form {
+            background-color: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin: 50px auto;
+            padding: 20px;
+            width: 400px;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 18px;
+            font-weight: normal;
+            margin: 0 0 10px;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 14px;
+            font-weight: normal;
+            margin: 0 0 10px;
+        }
+
+        code {
+            background-color: #f5f5f5;
+            border: 1px solid #e5e5e5;
+            border-radius: 3px;
+            display: block;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+
+        button {
+            background-color: #0088cc;
+            border: 1px solid #0077b3;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            display: block;
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0077b3;
+        }
+
+        button:active {
+            background-color: #006699;
+        }
+
+        button[disabled] {
+            background-color: #e5e5e5;
+            border-color: #e5e5e5;
+            color: #999;
+            cursor: default;
+        }
+
+        button[disabled]:hover {
+            background-color: #e5e5e5;
+            border-color: #e5e5e5;
+            color: #999;
+        }
+
+        input {
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            display: block;
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+
+        textarea {
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            display: block;
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+
+        #return {
+            background-color: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            margin: 50px auto;
+            padding: 20px;
+            width: 400px;
+            font-family: Consolas, Monaco, monospace;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,7 +130,7 @@
             curl -X POST -H "Content-Type: application/json" -d '{"to":"your_email","subject":"your_subject","body":"your_body","token":"your_token","html":"0"}' http://your_url/send
         </code>
     </p>
-    <h2>Try</h2>
+    <h2>Example Form</h2>
     <form>
         <p>To:</p>
         <input type="text" name="to" placeholder="To" value="i@lwd-temp.top">
@@ -27,14 +142,14 @@
         <input type="password" name="token" placeholder="Token" value="Test Token">
         <p>Is HTML?</p>
         <input type="checkbox" name="html" value="1">
-        <p>Save my token on this page.</p>
+        <p>Save my token in localStorage</p>
         <input type="checkbox" name="save" value="1">
         <br>
         <!--Button call send()-->
         <button type="button" onclick="send()">Send</button>
-        <!--Show return-->
-        <p id="return"></p>
     </form>
+    <!--Show return-->
+    <p id="return"></p>
     <script>
         var curl = document.getElementById('curl');
         curl.innerHTML = curl.innerHTML.replace(/your_url/g, window.location.host);
@@ -54,8 +169,8 @@
     </script>
     <script>
         function send() {
-            // hide button
-            document.querySelector('button').style.display = 'none';
+            // disable button
+            document.getElementsByTagName("button")[0].disabled = true;
             var to = document.getElementsByName('to')[0].value;
             var subject = document.getElementsByName('subject')[0].value;
             var body = document.getElementsByName('body')[0].value;
@@ -83,10 +198,10 @@
                 token: token,
                 html: html
             }));
-            // If request is done, no matter success or fail, show button
+            // If request is done, no matter success or fail, enable button
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
-                    document.querySelector('button').style.display = 'block';
+                    document.getElementsByTagName("button")[0].disabled = false;
                     // show the response
                     document.getElementById('return').innerHTML = xhr.responseText;
                 }
