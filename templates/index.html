@@ -169,7 +169,8 @@
     <p id="return"></p>
     <script>
         var curl = document.getElementById('curl');
-        curl.innerHTML = curl.innerHTML.replace(/your_url/g, window.location.host);
+        // Replace http://your_url with real url
+        curl.innerHTML = curl.innerHTML.replace('http://your_url', window.location.origin);
     </script>
     <script>
         /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
