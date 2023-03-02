@@ -218,23 +218,32 @@
             }
             if (html == true) {
                 html = 1;
-                // 获取编辑器的HTML
-                var body = editor.root.innerHTML;
-                // 获取编辑器的样式
+                // 获取编辑器的原始HTML备份
+                var originalQuillHtml = editor.root.innerHTML;
+                // 将每个元素的Style插入标签style属性
                 var style = '';
                 var sheets = document.styleSheets;
                 for (var i = 0; i < sheets.length; i++) {
-                    var sheet = sheets[i];
-                    var rules = sheet.rules || sheet.cssRules; // 兼容不同浏览器
+                    var rules = sheets[i].rules || sheets[i].cssRules; // 兼容不同浏览器
                     for (var j = 0; j < rules.length; j++) {
                         var rule = rules[j];
-                        if (rule.selectorText && rule.style && rule.style.length > 0 && editor.root.querySelector(rule.selectorText)) {
-                            style += rule.cssText;
+                        if (rule.selectorText && editor.root.querySelector(rule.selectorText)) {
+                            var elements = editor.root.querySelectorAll(rule.selectorText);
+                            for (var k = 0; k < elements.length; k++) {
+                                var element = elements[k];
+                                if (element.style) {
+                                    element.style.cssText += rule.style.cssText;
+                                }
+                            }
+                            // style += rule.cssText;
                         }
                     }
                 }
-                // 包含HTML和样式信息的结果
-                var body = '<!DOCTYPE html><html><head><style>' + style + '</style></head><body>' + body + '</body></html>';
+                // 获取处理后的HTML
+                var quillHtmlWithStyle = editor.root.innerHTML;
+                // 还原原始HTML
+                editor.root.innerHTML = originalQuillHtml;
+                var body = quillHtmlWithStyle;
             } else {
                 html = 0;
                 var body = editor.getText()
