@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>no-reply</title>
     <!-- Include Quill stylesheet -->
-    <link href="https://unpkg.com/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github-dark.min.css">
+    <link href="https://unpkg.com/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github-dark.min.css"
+        crossorigin="anonymous">
     <style>
         body {
             background-color: #f5f5f5;
@@ -217,7 +218,23 @@
             }
             if (html == true) {
                 html = 1;
+                // 获取编辑器的HTML
                 var body = editor.root.innerHTML;
+                // 获取编辑器的样式
+                var style = '';
+                var sheets = document.styleSheets;
+                for (var i = 0; i < sheets.length; i++) {
+                    var sheet = sheets[i];
+                    var rules = sheet.rules || sheet.cssRules; // 兼容不同浏览器
+                    for (var j = 0; j < rules.length; j++) {
+                        var rule = rules[j];
+                        if (rule.selectorText && rule.style && rule.style.length > 0 && editor.root.querySelector(rule.selectorText)) {
+                            style += rule.cssText;
+                        }
+                    }
+                }
+                // 包含HTML和样式信息的结果
+                var body = '<!DOCTYPE html><html><head><style>' + style + '</style></head><body>' + body + '</body></html>';
             } else {
                 html = 0;
                 var body = editor.getText()
